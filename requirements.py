@@ -1,11 +1,13 @@
 aniso8601==1.2.0
 click==6.6
 Flask==0.12
+Flask-MySQLdb==0.2.0
 Flask-RESTful==0.3.5
 Flask-SQLAlchemy==2.1
 itsdangerous==0.24
 Jinja2==2.8
 MarkupSafe==0.23
+mysqlclient==1.3.9
 python-dateutil==2.6.0
 pytz==2016.10
 six==1.10.0

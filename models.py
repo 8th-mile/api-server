@@ -1,0 +1,92 @@
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI']= 'mysql://root:password@localhost/mile'
+
+db = SQLAlchemy(app)
+
+users = db.Table('user_event_mapping', 
+        db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+        db.Column('event_id', db.Integer, db.ForeignKey('event.id'))
+       )
+ 
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), unique=True)
+    email = db.Column(db.String(128), unique=True)
+    phone = db.Column(db.String(10), unique=True)
+    password = db.Column(db.String(128), unique=True)
+    otp = db.Column(db.Integer, unique=True)
+    
+    first_places = db.relationship('Event', backref='user', lazy='dynamic')
+    second_places = db.relationship('Event', backref='user', lazy='dynamic')
+    third_places = db.relationship('Event', backref='user', lazy='dynamic')
+    events = db.relationship('Event', secondary='user_event_mapping',
+            backref=db.backref('users', lazy='dynamic'))
+
+
+    def __init__(self, username, email):
+        self.username = username
+        self.email = email
+        self.phone = phone
+
+    def __repr__(self):
+        return '<User %r>' %self.username
+
+class Event(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True)
+    total_tickets = db.Column(db.Integer)
+    avail_tickets = db.Column(db.Integer)
+    lat = db.Column(db.Float)
+    lug = db.Column(db.Float)
+    price = db.Column(db.Integer)
+    datetime = db.Column(db.DateTime)
+    winner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    second_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    third_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    first_prize = db.Column(db.Integer)
+    second_prize = db.Column(db.Integer)
+    third_prize = db.Column(db.Integer)
+
+    sponsors = db.relationship('Sponsors', secondary='sponsors_event_mapping',
+            backref=db.backref('events', lazy='dynamic'))
+    coordinator = db.relationship('coordinator', backref='event', lazy='dynamic')
+    
+    def __repr__(self):
+        return '<Event %r>' %self.name
+
+
+       
+class Sponsors(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True)
+    logo_url = db.Column(db.String(256))
+    def __repr__(self):
+        return '<Sponsor %r>' %self.name
+ 
+sponsors = db.Table('sponsors_event_mapping',
+        db.Column('sponsor_id', db.Integer, db.ForeignKey('sponsors.id')),
+        db.Column('event_id', db.Integer, db.ForeignKey('event.id'))
+        )
+
+class coordinator(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    event = db.Column(db.Integer, db.ForeignKey('event.id'))
+    username = db.Column(db.String(64))
+    password = db.Column(db.String(256))
+    
+class publicity_team(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    lead_id = db.Column(db.Integer)
+    publicity_user = db.relationship('publicity_user', backref='publicity_team', lazy='dynamic')
+
+class publicity_user(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64))
+    password = db.Column(db.String(256))
+    publicity_team = db.Column(db.Integer, db.ForeignKey('publicity_team.id'))
+    def __repr__(self):
+        return '<Pub_user %r>' %self.name
