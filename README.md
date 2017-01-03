@@ -2,7 +2,7 @@
 8th mile apis
 
 
-1. User-signup
+1. User-signup (/user/signup)
   * Request
  ```json
  {"name": "8mile", "password": "1234", "phone": "123456789"}
