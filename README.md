@@ -5,7 +5,7 @@
 1. User-signup (/user/signup)
   * Request
  ```json
- {"name": "8mile", "password": "1234", "phone": "123456789"}
+ {"name": "8mile", "phone": "123456789"}
  ```
   * Response
   ```json
@@ -15,11 +15,11 @@
 2. User-verify (/verify)
   * Request
   ```json
-  {"otp":"23463"}
+  {"phone":"123456789",otp":"23463"}
   ```
   * Response
   ```json
-  {"msg":"Successfully registered or failed", "success":"true or false", "statuscode":"200 or 400 or etc."}
+  {"msg":"Successfully registered or failed", "token":"jwt token,in case of signup this should be null", "success":"true or false",     "statuscode":"200 or 400 or etc."}
   ```
  
 3. User-login (/user/login)
@@ -29,5 +29,5 @@
   ```
  * Response
  ```json
- {"token":"it will be a jwt token","statuscode":"200 or 400 or etc."}
+ {"otp":"53634 or error", "success":"true or false", "statuscode":"200 or 400 etc."}
  ```
