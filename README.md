@@ -9,7 +9,7 @@
  ```
   * Response
   ```json
-  {"msg":"successfully registered or failed"}
+  {"msg":"successfully registered or failed", "statuscode":"200 or 400 etc."}
   ```
 2. User-login (/user/login)
  * Request
@@ -18,5 +18,5 @@
   ```
  * Response
  ```json
- {"token":"it will be a jwt token"}
+ {"token":"it will be a jwt token","statuscode":"200 or 400 or etc."}
  ```
