@@ -9,12 +9,23 @@
  ```
   * Response
   ```json
-  {"msg":"successfully registered or failed", "statuscode":"200 or 400 etc."}
+  {"otp":"53634 or error", "success":"true or false", "statuscode":"200 or 400 etc."}
   ```
-2. User-login (/user/login)
+  
+2. User-verify (/verify)
+  * Request
+  ```json
+  {"otp":"23463"}
+  ```
+  * Response
+  ```json
+  {"msg":"Successfully registered or failed", "success":"true or false", "statuscode":"200 or 400 or etc."}
+  ```
+ 
+3. User-login (/user/login)
  * Request
   ```json
-  {"phone or email":"a@cv.com", "password": "1234"}
+  {"phone":"a@cv.com"}
   ```
  * Response
  ```json
