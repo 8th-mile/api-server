@@ -9,13 +9,13 @@
  ```
   * Response
   ```json
-  {"otp":"53634 or error", "success":"true or false", "statuscode":"200 or 400 etc."}
+  {"success":"true or false", "statuscode":"200 or 400 etc."}
   ```
   
 2. User-verify (/verify)
   * Request
   ```json
-  {"phone":"123456789",otp":"23463"}
+  {"phone":"123456789","otp":"23463"}
   ```
   * Response
   ```json
