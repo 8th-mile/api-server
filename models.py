@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+import random
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI']= 'mysql://root:password@localhost/mile'
@@ -20,17 +21,19 @@ class User(db.Model):
     password = db.Column(db.String(128), unique=True)
     otp = db.Column(db.Integer, unique=True)
     
-    first_places = db.relationship('Event', backref='user', lazy='dynamic')
-    second_places = db.relationship('Event', backref='user', lazy='dynamic')
-    third_places = db.relationship('Event', backref='user', lazy='dynamic')
+    first_places = db.relationship('Event', backref='first_user',foreign_keys='Event.winner_id', lazy='dynamic')
+    second_places = db.relationship('Event', backref='second_user',foreign_keys='Event.second_id', lazy='dynamic')
+    third_places = db.relationship('Event', backref='third_user', foreign_keys='Event.third_id',lazy='dynamic')
     events = db.relationship('Event', secondary='user_event_mapping',
-            backref=db.backref('users', lazy='dynamic'))
+            #foreign_keys='Event',
+            backref=db.backref('event_users', lazy='dynamic'))
 
 
-    def __init__(self, username, email):
+    def __init__(self, username, phone, email):
         self.username = username
         self.email = email
         self.phone = phone
+        self.otp = random.randint(10000, 99999)
 
     def __repr__(self):
         return '<User %r>' %self.username
@@ -53,7 +56,7 @@ class Event(db.Model):
 
     sponsors = db.relationship('Sponsors', secondary='sponsors_event_mapping',
             backref=db.backref('events', lazy='dynamic'))
-    coordinator = db.relationship('coordinator', backref='event', lazy='dynamic')
+    coordinator = db.relationship('coordinator', backref='coordinator.event', lazy='dynamic')
     
     def __repr__(self):
         return '<Event %r>' %self.name
@@ -81,7 +84,7 @@ class coordinator(db.Model):
 class publicity_team(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     lead_id = db.Column(db.Integer)
-    publicity_user = db.relationship('publicity_user', backref='publicity_team', lazy='dynamic')
+    publicity_user = db.relationship('publicity_user', backref='publicity_team_user', lazy='dynamic')
 
 class publicity_user(db.Model):
     id = db.Column(db.Integer, primary_key=True)
