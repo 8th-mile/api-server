@@ -1,44 +1,55 @@
-from flask import Flask, request
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask
 from flask_restful import Resource, Api, reqparse
 
 from models import User, db
+from errors import *
 
-app = Flask(__name__)
-api = Api(app)
 
-parser = reqparse.RequestParser()
-parser.add_argument('name')
-parser.add_argument('phone')
 
 class UserSignup(Resource):
     def __init__(self):
-        #parser = reqparse.RequestParser()
-        pass
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('name')
+        self.parser.add_argument('phone')
+        self.parser.add_argument('email')
+
     def post(self):
-        args = parser.parse_args()
+        # Extract data from URL
+        args = self.parser.parse_args()
         name = args['name']
         phone = args['phone']
-        email = request.form['email']
+        email = args['email']
 
-        #return {"success": "true", "name": name, "phone" : phone}
+        # Validate data
+        if len(name) == 0:
+            raise NameEmptyError()
+        if len(email) == 0:
+            raise EmailEmptyError()
+        if len(phone) != 10:
+            raise InvalidPhoneNumberError()
 
-        #Insert into db
-        user_db_object = User(name, phone, email)
-        db.session.add(user_db_object)
-        db.session.commit()
+        #Insert into database
+        try:
+            user_db_object = User(name, phone, email)
+            db.session.add(user_db_object)
+            db.session.commit()
+        except:
+            raise DBInsertError()
 
-        #check if user insertion is successfull in db
-        inserted_user = User.query.filter_by(phone=phone).first()
-        print inserted_user.username
-        if inserted_user is None:
-            return {"success": "false"}, 400
-        else:
-            return {"success":"true", "name" : inserted_user.username} # default is 200
+        # Check if user insertion is successfull in db
+        try:
+            inserted_user = User.query.filter_by(phone=phone).first()
+            if inserted_user is None:
+                return {"success": "false"}, 400
+            else:
+                return {"success":"true", "name" : inserted_user.username}
+        except:
+            raise DBQueryError()
 
-
-#api.add_resource(HelloWorld, '/')
-api.add_resource(UserSignup, '/user/signup')
 
 if __name__ == '__main__':
+    db.create_all()
+    app = Flask(__name__)
+    api = Api(app, catch_all_404s=True, errors=CUSTOM_ERRORS)
+    api.add_resource(UserSignup, '/user/signup')
     app.run(debug=True)
