@@ -14,22 +14,22 @@ class DBQueryError(HTTPException):
 CUSTOM_ERRORS = {
     "NameEmptyError": {
         "message" : "Name cannot be empty.",
-        "status" : 401,
+        "status" : 400,
     },
     "InvalidPhoneNumberError": {
         "message": "Phone number doesn't contain 10 digits. Please verify and re-enter!",
-        "status": 401,
+        "status": 400,
     },
     "EmailEmptyError": {
         "message": "Email cannot be empty. Please fill it up.",
-        "status": 401,
+        "status": 400,
     },
     "DBInsertError": {
         "message": "Unable to insert into database.",
-        "status": 402,
+        "status": 409,
     },
     "DBQueryError": {
         "message": "Unable to query user from database",
-        "status": 402,
+        "status": 404,
     },
 }
