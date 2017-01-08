@@ -3,15 +3,17 @@ from flask_sqlalchemy import SQLAlchemy
 import random
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI']= 'mysql://root:password@localhost/mile'
+app.config['SQLALCHEMY_DATABASE_URI']= 'mysql://root:root@127.0.0.1:8889/mile'
 
 db = SQLAlchemy(app)
 
-users = db.Table('user_event_mapping', 
+print db
+
+users = db.Table('user_event_mapping',
         db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
         db.Column('event_id', db.Integer, db.ForeignKey('event.id'))
        )
- 
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -20,7 +22,7 @@ class User(db.Model):
     phone = db.Column(db.String(10), unique=True)
     password = db.Column(db.String(128), unique=True)
     otp = db.Column(db.Integer, unique=True)
-    
+
     first_places = db.relationship('Event', backref='first_user',foreign_keys='Event.winner_id', lazy='dynamic')
     second_places = db.relationship('Event', backref='second_user',foreign_keys='Event.second_id', lazy='dynamic')
     third_places = db.relationship('Event', backref='third_user', foreign_keys='Event.third_id',lazy='dynamic')
@@ -57,19 +59,19 @@ class Event(db.Model):
     sponsors = db.relationship('Sponsors', secondary='sponsors_event_mapping',
             backref=db.backref('events', lazy='dynamic'))
     coordinator = db.relationship('coordinator', backref='coordinator.event', lazy='dynamic')
-    
+
     def __repr__(self):
         return '<Event %r>' %self.name
 
 
-       
+
 class Sponsors(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
     logo_url = db.Column(db.String(256))
     def __repr__(self):
         return '<Sponsor %r>' %self.name
- 
+
 sponsors = db.Table('sponsors_event_mapping',
         db.Column('sponsor_id', db.Integer, db.ForeignKey('sponsors.id')),
         db.Column('event_id', db.Integer, db.ForeignKey('event.id'))
@@ -80,7 +82,7 @@ class coordinator(db.Model):
     event = db.Column(db.Integer, db.ForeignKey('event.id'))
     username = db.Column(db.String(64))
     password = db.Column(db.String(256))
-    
+
 class publicity_team(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     lead_id = db.Column(db.Integer)

@@ -1,6 +1,10 @@
 # api-server
 8th mile apis
 
+#### Installation
+```shell
+pip install -r requirements.txt
+```
 
 1. User-signup (/user/signup)
   * Request
@@ -11,7 +15,7 @@
   ```json
   {"success":"true or false", "statuscode":"200 or 400 etc."}
   ```
-  
+
 2. User-verify (/verify)
   * Request
   ```json
@@ -21,7 +25,7 @@
   ```json
   {"msg":"Successfully registered or failed", "token":"jwt token,in case of signup this should be null", "success":"true or false",     "statuscode":"200 or 400 or etc."}
   ```
- 
+
 3. User-login (/user/login)
  * Request
   ```json
