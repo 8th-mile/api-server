@@ -21,11 +21,11 @@ class UserSignup(Resource):
         email = args['email']
 
         # Validate data
-        if len(name) == 0:
+        if not name:
             raise NameEmptyError()
-        if len(email) == 0:
+        if not email:
             raise EmailEmptyError()
-        if len(phone) != 10:
+        if not phone:
             raise InvalidPhoneNumberError()
 
         #Insert into database
@@ -33,18 +33,18 @@ class UserSignup(Resource):
             user_db_object = User(name, phone, email)
             db.session.add(user_db_object)
             db.session.commit()
-        except:
+        except Exception:
             raise DBInsertError()
 
         # Check if user insertion is successfull in db
         try:
             inserted_user = User.query.filter_by(phone=phone).first()
-            if inserted_user is None:
-                return {"success": "false"}, 400
-            else:
+            if inserted_user:
                 return {"success":"true", "name" : inserted_user.username}
+                return {"success": "false"}, 400
         except:
             raise DBQueryError()
+
 
 
 if __name__ == '__main__':
