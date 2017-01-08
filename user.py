@@ -46,10 +46,26 @@ class UserSignup(Resource):
         except:
             raise DBQueryError()
 
+class UserLogin(Resource):
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('phone')
+
+    def get(self):
+        # Extract data from URL
+        args = self.parser.parse_args()
+        phone = args['phone']
+        # Get corresponding User's OTP
+        try:
+            user_obj = User.query.filter_by(phone=phone).first()
+            return {"success" : "true", "otp" : user_obj.otp}
+        except:
+            raise UserNotFound()
 
 if __name__ == '__main__':
     db.create_all()
     app = Flask(__name__)
     api = Api(app, catch_all_404s=True, errors=CUSTOM_ERRORS)
     api.add_resource(UserSignup, '/user/signup')
+    api.add_resource(UserLogin, '/user/login')
     app.run(debug=True)
