@@ -42,7 +42,7 @@ pip install -r requirements.txt
   ```
   * Response
   ```json
- { "msg":"successfully added or failed",success":"true or false", "statuscode":"200 or 400 etc."}
+ { "msg":"successfully added or failed","success":"true or false", "statuscode":"200 or 400 etc."}
  ```
  
  5. Event-get (/event)
