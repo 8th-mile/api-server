@@ -72,6 +72,11 @@ class Sponsors(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
     logo_url = db.Column(db.String(256))
+
+    def __init__(self, name, logo):
+        self.name = name
+        self.logo_url = logo
+
     def __repr__(self):
         return '<Sponsor %r>' %self.name
  
