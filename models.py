@@ -40,6 +40,7 @@ class User(db.Model):
 
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.Integer)
     name = db.Column(db.String(64), unique=True)
     total_tickets = db.Column(db.Integer)
     avail_tickets = db.Column(db.Integer)
@@ -57,12 +58,16 @@ class Event(db.Model):
     sponsors = db.relationship('Sponsors', secondary='sponsors_event_mapping',
             backref=db.backref('events', lazy='dynamic'))
     coordinator = db.relationship('coordinator', backref='coordinator.event', lazy='dynamic')
+
+    def __init__(self, type, name, date, price):
+        self.type = type
+        self.name = name
+        self.date = date
+        self.price = price
     
     def __repr__(self):
         return '<Event %r>' %self.name
 
-
-       
 class Sponsors(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
