@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import random
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI']= 'mysql://root:password@localhost/mile'
+app.config['SQLALCHEMY_DATABASE_URI']= 'mysql://root:@localhost/mile1'
 
 db = SQLAlchemy(app)
 
@@ -11,7 +11,11 @@ users = db.Table('user_event_mapping',
         db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
         db.Column('event_id', db.Integer, db.ForeignKey('event.id'))
        )
- 
+wishlist_events = db.Table('wishlist_events',
+        db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+        db.Column('event_id', db.Integer, db.ForeignKey('event.id'))
+       )
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -27,7 +31,8 @@ class User(db.Model):
     events = db.relationship('Event', secondary='user_event_mapping',
             #foreign_keys='Event',
             backref=db.backref('event_users', lazy='dynamic'))
-
+    wishlist_events = db.relationship('Event', secondary=wishlist_events,
+            backref=db.backref('event_keeners', lazy='dynamic'))
 
     def __init__(self, username, phone, email):
         self.username = username
@@ -62,7 +67,7 @@ class Event(db.Model):
     def __init__(self, type, name, date, price):
         self.type = type
         self.name = name
-        self.date = date
+        self.datetime = date
         self.price = price
     
     def __repr__(self):

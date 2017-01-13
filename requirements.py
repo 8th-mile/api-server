@@ -13,3 +13,4 @@ pytz==2016.10
 six==1.10.0
 SQLAlchemy==1.1.4
 Werkzeug==0.11.13
+PyQRCode==1.2.1

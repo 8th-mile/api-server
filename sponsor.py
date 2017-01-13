@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restful import Resource, Api, reqparse
 from models import db, Event, Sponsors
 from errors import *
@@ -18,7 +18,7 @@ class AddSponsor(Resource):
                  'event': sponsor_events
                  }                
                 )
-        return {'sponsors': sponsor_list}
+        return jsonify(results = sponsor_list)
 
     def __init__(self):
         self.parser = reqparse.RequestParser()

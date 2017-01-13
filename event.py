@@ -4,22 +4,10 @@ from errors import *
 from models import Event, db, User
 import datetime
 
+from pprint import pformat
 now = datetime.datetime.utcnow()
 
 class Eventadd(Resource):
-    def get(self):
-        events = Event.query.all()
-        event_list = []
-        for event in events:
-            event_list.append(
-                {'name': event.name,
-                 'date': event.datetime,
-                 'type': event.type,
-                 'price': event.price
-                 }                
-                )
-        return {'events': event_list}
-
     def __init__(self):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument('type')
@@ -27,14 +15,34 @@ class Eventadd(Resource):
         self.parser.add_argument('date')
         self.parser.add_argument('price')
 
+    def get(self):
+        events = Event.query.all()
+        print type(events)
+        event_list = []
+        for event in events:
+            event_list.append(
+                {'id' : event.id,
+                 'name': event.name,
+                 'date': event.datetime,
+                 'type': event.type,
+                 'price': event.price
+                 }                
+                )
+        return jsonify(results = event_list)
+
     def post(self):
         args = self.parser.parse_args()
-        type =  args['type']
+        type = args['type']
         name = args['name']
-        date = now
+        event_date = args['date']
+        event_date = event_date.split('/')
+        # TODO : Check if date format is right => Are there 3 items in list?
+        day, month, year = (int(d) for d in event_date)
+        db_date = datetime.date(year, month, day)
+        print pformat(db_date)
         price = args['price']
         try:
-            event = Event(type, name, date, price)
+            event = Event(type, name, db_date, price)
             db.session.add(event)
             db.session.commit()
             return {"Success" : "true"}
@@ -53,8 +61,8 @@ class EventRegister(Resource):
         user_id = args['user_id']
         event_id = args['event_id']
 
-        event = Event.query.filter(event_id).first_or_404()
-        user = User.query.filter(user_id).first_or_404()
+        event = Event.query.get(event_id)
+        user = User.query.get(user_id)
         try:
             user.events.append(event)
             db.session.add(user)
