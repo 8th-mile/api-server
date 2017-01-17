@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import random
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI']= 'mysql://root:@localhost/mile1'
+app.config['SQLALCHEMY_DATABASE_URI']= 'mysql://root:password@localhost/mile'
 
 db = SQLAlchemy(app)
 
@@ -59,15 +59,16 @@ class Event(db.Model):
     first_prize = db.Column(db.Integer)
     second_prize = db.Column(db.Integer)
     third_prize = db.Column(db.Integer)
-
+    venue = db.Column(db.String(64))
     sponsors = db.relationship('Sponsors', secondary='sponsors_event_mapping',
             backref=db.backref('events', lazy='dynamic'))
     coordinator = db.relationship('coordinator', backref='coordinator.event', lazy='dynamic')
 
-    def __init__(self, type, name, date, price):
+    def __init__(self, type, name, date, venue, price):
         self.type = type
         self.name = name
         self.datetime = date
+        self.venue = venue
         self.price = price
     
     def __repr__(self):

@@ -2,10 +2,13 @@ from flask import Flask, Response, jsonify
 from flask_restful import Resource, Api, reqparse
 from errors import *
 from models import Event, db, User
-import datetime
 
+import datetime
+import pyqrcode
+from collections import OrderedDict
 from pprint import pformat
-now = datetime.datetime.utcnow()
+
+QRCODE_PATH = "qrcodes/"
 
 class Eventadd(Resource):
     def __init__(self):
@@ -13,6 +16,7 @@ class Eventadd(Resource):
         self.parser.add_argument('type')
         self.parser.add_argument('name')
         self.parser.add_argument('date')
+        self.parser.add_argument('venue')
         self.parser.add_argument('price')
 
     def get(self):
@@ -24,6 +28,7 @@ class Eventadd(Resource):
                 {'id' : event.id,
                  'name': event.name,
                  'date': event.datetime,
+                 'venue': event.venue,
                  'type': event.type,
                  'price': event.price
                  }                
@@ -39,10 +44,10 @@ class Eventadd(Resource):
         # TODO : Check if date format is right => Are there 3 items in list?
         day, month, year = (int(d) for d in event_date)
         db_date = datetime.date(year, month, day)
-        print pformat(db_date)
+        venue = args['venue']
         price = args['price']
         try:
-            event = Event(type, name, db_date, price)
+            event = Event(type, name, db_date, venue, price)
             db.session.add(event)
             db.session.commit()
             return {"Success" : "true"}
@@ -67,7 +72,21 @@ class EventRegister(Resource):
             user.events.append(event)
             db.session.add(user)
             db.session.commit()
-            return {"success" : "true"}
+
+            # Generate QR code
+            qr_payload = OrderedDict()
+            qr_payload["User ID"] = str(user.id)
+            qr_payload["Event ID"] = str(event.id)
+            qr_payload["Date"] = str(event.datetime)
+            qr_payload["Venue"] = event.venue
+            qr_payload["Price"] = str(event.price)
+
+            code = pyqrcode.create(str(qr_payload))
+            qrcode_file_name = event.name + "--" + str(user.id) + ".svg"
+            qr_link = QRCODE_PATH + qrcode_file_name
+            code.svg(qr_link, scale=8)
+            return {"success" : "true",
+                    "link": qr_link}
         except Exception as exception:
             print exception
             return DBInsertError()
