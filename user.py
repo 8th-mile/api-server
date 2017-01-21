@@ -4,6 +4,7 @@ import requests
 
 from models import User, Event, db
 from errors import *
+from decorators import token_required
 
 class UserSignup(Resource):
     def __init__(self):
@@ -48,7 +49,10 @@ class UserWish(Resource):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument('user_id')
         self.parser.add_argument('event_id')
-
+        self.parser.add_argument('token', location='headers')
+ 
+    
+    @token_required
     def get(self):
         args = self.parser.parse_args()
         user_id = args['user_id']
@@ -66,6 +70,7 @@ class UserWish(Resource):
             )
         return jsonify(results=event_list)
 
+    @token_required
     def post(self):
         args = self.parser.parse_args()
         user_id = args['user_id']
@@ -87,8 +92,10 @@ class UserInfo(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument('user_id')
+        self.parser.add_argument('token', location='headers')
 
 
+    @token_required
     def get(self):
         args = self.parser.parse_args()
         user_id = args['user_id']

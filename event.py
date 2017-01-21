@@ -3,6 +3,7 @@ from flask_restful import Resource, Api, reqparse
 from errors import *
 from models import Event, db, User
 import datetime
+from decorators import token_required
 
 from pprint import pformat
 now = datetime.datetime.utcnow()
@@ -14,10 +15,10 @@ class Eventadd(Resource):
         self.parser.add_argument('name')
         self.parser.add_argument('date')
         self.parser.add_argument('price')
-
+        self.parser.add_argument('token', location='headers')
+    @token_required
     def get(self):
         events = Event.query.all()
-        print type(events)
         event_list = []
         for event in events:
             event_list.append(
@@ -29,12 +30,14 @@ class Eventadd(Resource):
                  }                
                 )
         return jsonify(results = event_list)
-
+    
+    @token_required
     def post(self):
         args = self.parser.parse_args()
         type = args['type']
         name = args['name']
         event_date = args['date']
+
         event_date = event_date.split('/')
         # TODO : Check if date format is right => Are there 3 items in list?
         day, month, year = (int(d) for d in event_date)
@@ -55,7 +58,9 @@ class EventRegister(Resource):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument('user_id')
         self.parser.add_argument('event_id')
+        self.parser.add_argument('token', location='headers')
 
+    @token_required
     def post(self):
         args = self.parser.parse_args()
         user_id = args['user_id']
