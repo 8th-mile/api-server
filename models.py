@@ -1,9 +1,10 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import random
+import hashlib
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI']= 'mysql://root:@localhost/mile1'
+app.config['SQLALCHEMY_DATABASE_URI']= 'mysql://root:password@localhost/mile'
 
 db = SQLAlchemy(app)
 
@@ -21,24 +22,25 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True)
     email = db.Column(db.String(128), unique=True)
-    phone = db.Column(db.String(10), unique=True)
-    password = db.Column(db.String(128), unique=True)
-    otp = db.Column(db.Integer, unique=True)
+    photo = db.Column(db.String(256), unique=True)
+    kid = db.Column(db.String(64), unique=True)
+    token =  db.Column(db.String(256),unique=True)
     
     first_places = db.relationship('Event', backref='first_user',foreign_keys='Event.winner_id', lazy='dynamic')
     second_places = db.relationship('Event', backref='second_user',foreign_keys='Event.second_id', lazy='dynamic')
     third_places = db.relationship('Event', backref='third_user', foreign_keys='Event.third_id',lazy='dynamic')
     events = db.relationship('Event', secondary='user_event_mapping',
-            #foreign_keys='Event',
             backref=db.backref('event_users', lazy='dynamic'))
     wishlist_events = db.relationship('Event', secondary=wishlist_events,
             backref=db.backref('event_keeners', lazy='dynamic'))
+    
 
-    def __init__(self, username, phone, email):
+    def __init__(self, username, email, photo, kid):
         self.username = username
         self.email = email
-        self.phone = phone
-        self.otp = random.randint(10000, 99999)
+        self.photo = photo
+        self.kid = kid
+        self.token = hashlib.sha256(str(random.getrandbits(256))).hexdigest()
 
     def __repr__(self):
         return '<User %r>' %self.username

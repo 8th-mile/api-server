@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
     api.add_resource(UserInfo, '/user')
     api.add_resource(UserSignup, '/user/signup')
-    api.add_resource(UserVerify, '/user/verify')
+    #api.add_resource(UserVerify, '/user/verify')
     api.add_resource(UserWish, '/user/wish')
     api.add_resource(Eventadd, '/event')
     api.add_resource(EventRegister, '/event/register')
