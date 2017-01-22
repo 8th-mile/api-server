@@ -25,23 +25,23 @@ class UserSignup(Resource):
         if not email:
             raise EmailEmptyError()
         
-        user = User.query.filter_by(email=email).first()
-        if not user:
-
         #Insert into database
-            url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token={}'.format(idtoken)
-            try:
-                data = requests.get(url).json()
+        url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token={}'.format(idtoken)
+        try:
+            data = requests.get(url).json()
+            user = User.query.filter_by(email=data['email']).first()
+            if not user:
                 user = User(username=data['name'], email=data['email'],
                         photo=data['picture'], kid=data['kid'])
                 db.session.add(user)
                 db.session.commit()
                 return {"success" : "true", "id" : user.id, "name": user.username, 'token' : user.token}
-            except Exception as exception:
-                print exception
-                raise DBInsertError()
 
-        return {"success" : "true", "id" : user.id, "name" : user.username, 'token' : user.token}
+            return {"success" : "true", "id" : user.id, "name": user.username, 'token' : user.token}
+
+        except Exception as exception:
+            print exception
+            raise DBInsertError()
 
 
 class UserWish(Resource):
@@ -106,4 +106,4 @@ class UserInfo(Resource):
             "name": user.username,
             "registered events": [event.id for event in user.events],
             "events in wishlist": [event.id for event in user.wishlist_events]
-}
+            }
