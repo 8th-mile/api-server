@@ -63,6 +63,7 @@ class UserWish(Resource):
         for event in wished_events:
             event_list.append(
                 {'name': event.name,
+                 'id' : event.id,
                  'date': event.datetime,
                  'type': event.type,
                  'price': event.price
