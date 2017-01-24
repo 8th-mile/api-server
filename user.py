@@ -81,10 +81,12 @@ class UserWish(Resource):
         user = User.query.get(user_id)
 
         try:
-            user.wishlist_events.append(event)
-            db.session.add(user)
-            db.session.commit()
-            return {"success": "true"}
+            if not event in user.wishlist_events:
+                user.wishlist_events.append(event)
+                db.session.add(user)
+                db.session.commit()
+                return {"success": "true"}
+            return {"Error": "Can't add same event again"}, 409
         except Exception as exception:
             print exception
             return DBInsertError()

@@ -69,10 +69,12 @@ class EventRegister(Resource):
         event = Event.query.get(event_id)
         user = User.query.get(user_id)
         try:
-            user.events.append(event)
-            db.session.add(user)
-            db.session.commit()
-            return {"success" : "true"}
+            if not event in user.events:
+                user.events.append(event)
+                db.session.add(user)
+                db.session.commit()
+                return {"success" : "true"}
+            return {"Error":" Can't register for the same event again"}, 409 
         except Exception as exception:
             print exception
             return DBInsertError()
