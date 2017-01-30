@@ -15,6 +15,8 @@ class Eventadd(Resource):
         self.parser.add_argument('name')
         self.parser.add_argument('date')
         self.parser.add_argument('price')
+        self.parser.add_argument('about')
+        self.parser.add_argument('rules')
         self.parser.add_argument('token', location='headers')
     @token_required
     def get(self):
@@ -44,8 +46,10 @@ class Eventadd(Resource):
         db_date = datetime.date(year, month, day)
         print pformat(db_date)
         price = args['price']
+        about = args['about']
+        rules = args['rules']
         try:
-            event = Event(type, name, db_date, price)
+            event = Event(type, name, db_date, price, about, rules)
             db.session.add(event)
             db.session.commit()
             return {"Success" : "true"}

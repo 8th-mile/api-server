@@ -55,6 +55,8 @@ class Event(db.Model):
     lug = db.Column(db.Float)
     price = db.Column(db.Integer)
     datetime = db.Column(db.DateTime)
+    about = db.Column(db.Text)
+    rules = db.Column(db.Text)
     winner_id = db.Column(db.Integer, db.ForeignKey('user.id'), unique=True)
     second_id = db.Column(db.Integer, db.ForeignKey('user.id'), unique=True)
     third_id = db.Column(db.Integer, db.ForeignKey('user.id'), unique=True)
@@ -66,7 +68,7 @@ class Event(db.Model):
             backref=db.backref('events', lazy='dynamic'))
     coordinator = db.relationship('coordinator', backref='coordinator.event', lazy='dynamic')
 
-    def __init__(self, type, name, date, price):
+    def __init__(self, type, name, date, price, about, rules):
         self.type = type
         self.name = name
         self.datetime = date
