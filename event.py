@@ -28,7 +28,11 @@ class Eventadd(Resource):
                  'name': event.name,
                  'date': event.datetime,
                  'type': event.type,
-                 'price': event.price
+                 'price': event.price,
+                 'about' : event.about,
+                 'rules' : event.rules,
+                 'first_prize' : event.first_prize,
+                 'second_prize' : event.second_prize,
                  }                
                 )
         return jsonify(results = event_list)

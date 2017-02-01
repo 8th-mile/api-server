@@ -52,7 +52,7 @@ class UserWish(Resource):
         self.parser.add_argument('token', location='headers')
  
     
-    @token_required
+    #@token_required
     def get(self):
         args = self.parser.parse_args()
         user_id = args['user_id']
@@ -66,7 +66,11 @@ class UserWish(Resource):
                  'id' : event.id,
                  'date': event.datetime,
                  'type': event.type,
-                 'price': event.price
+                 'price': event.price,
+                 'about' : event.about,
+                 'rules' : event.rules,
+                 'first_prize' : event.first_prize,
+                 'second_prize' : event.second_prize,
                  }
             )
         return jsonify(results=event_list)
@@ -107,6 +111,6 @@ class UserInfo(Resource):
         return {
             "id": user.id,
             "name": user.username,
-            "registered events": [event.id for event in user.events],
-            "events in wishlist": [event.id for event in user.wishlist_events]
+            "registered_events": [event.id for event in user.events],
+            "events_in_wishlist": [event.id for event in user.wishlist_events]
             }
