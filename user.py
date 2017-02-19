@@ -32,7 +32,7 @@ class UserSignup(Resource):
             user = User.query.filter_by(email=data['email']).first()
             if not user:
                 user = User(username=data['name'], email=data['email'],
-                        photo=data['picture'], kid=data['kid'])
+                        photo=data['picture'], kid=data['kid'], token=idtoken)
                 db.session.add(user)
                 db.session.commit()
                 return {"success" : "true", "id" : user.id, "name": user.username, 'token' : user.token}
@@ -52,7 +52,7 @@ class UserWish(Resource):
         self.parser.add_argument('token', location='headers')
  
     
-    #@token_required
+    @token_required
     def get(self):
         args = self.parser.parse_args()
         user_id = args['user_id']

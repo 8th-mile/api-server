@@ -35,12 +35,12 @@ class User(db.Model):
             backref=db.backref('event_keeners', lazy='dynamic'))
     
 
-    def __init__(self, username, email, photo, kid):
+    def __init__(self, username, email, photo, kid, token):
         self.username = username
         self.email = email
         self.photo = photo
         self.kid = kid
-        self.token = hashlib.sha256(str(random.getrandbits(256))).hexdigest()
+        self.token = token
 
     def __repr__(self):
         return '<User %r>' %self.username
